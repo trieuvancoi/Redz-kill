@@ -15,15 +15,20 @@ getgenv().KillPlayers = true
 getgenv().KillMobs = true
 
 -- GUI
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+
+-- Frame Menu
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 200, 0, 180)
+Frame.Size = UDim2.new(0, 200, 0, 220)
 Frame.Position = UDim2.new(0.1, 0, 0.2, 0)
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.Visible = true
 
 local UIList = Instance.new("UIListLayout", Frame)
 UIList.Padding = UDim.new(0, 5)
 
+-- Hàm tạo nút
 local function makeButton(text, callback)
     local btn = Instance.new("TextButton", Frame)
     btn.Size = UDim2.new(1, -10, 0, 30)
@@ -34,6 +39,7 @@ local function makeButton(text, callback)
     return btn
 end
 
+-- Các nút trong menu
 local toggleBtn = makeButton("Kill Aura: OFF", function()
     getgenv().KillAuraEnabled = not getgenv().KillAuraEnabled
     toggleBtn.Text = "Kill Aura: " .. (getgenv().KillAuraEnabled and "ON" or "OFF")
@@ -62,7 +68,22 @@ local mobsBtn = makeButton("Đánh Quái: "..(getgenv().KillMobs and "ON" or "OF
     mobsBtn.Text = "Đánh Quái: "..(getgenv().KillMobs and "ON" or "OFF")
 end)
 
--- Tìm mục tiêu
+-- Nút bật/tắt menu
+local toggleMenu = Instance.new("TextButton", ScreenGui)
+toggleMenu.Size = UDim2.new(0, 40, 0, 40)
+toggleMenu.Position = UDim2.new(0, 10, 0, 150)
+toggleMenu.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+toggleMenu.Text = "≡"
+toggleMenu.TextScaled = true
+toggleMenu.TextColor3 = Color3.new(1,1,1)
+
+local menuVisible = true
+toggleMenu.MouseButton1Click:Connect(function()
+    menuVisible = not menuVisible
+    Frame.Visible = menuVisible
+end)
+
+-- Hàm tìm mục tiêu
 local function getTargets()
     local found = {}
 
@@ -78,7 +99,7 @@ local function getTargets()
         end
     end
 
-    -- Quái (giả sử folder tên "Enemies")
+    -- Quái (giả sử để trong workspace.Enemies)
     if getgenv().KillMobs and workspace:FindFirstChild("Enemies") then
         for _, mob in ipairs(workspace.Enemies:GetChildren()) do
             if mob:FindFirstChild("HumanoidRootPart") and mob:FindFirstChild("Humanoid") then
@@ -90,7 +111,7 @@ local function getTargets()
         end
     end
 
-    -- Giới hạn số lượng
+    -- Giới hạn số mục tiêu
     local limited = {}
     for i = 1, math.min(getgenv().KillAuraMaxTargets, #found) do
         table.insert(limited, found[i])
@@ -98,9 +119,9 @@ local function getTargets()
     return limited
 end
 
--- Hàm đánh (thay bằng remote game bạn)
+-- Hàm đánh (bạn cần sửa lại cho đúng remote attack của game)
 local function attack(target)
-    -- ví dụ: game.ReplicatedStorage.Remotes.Attack:FireServer(target)
+    -- Ví dụ: game.ReplicatedStorage.Remotes.Attack:FireServer(target)
     print("Đánh:", target.Name)
 end
 
