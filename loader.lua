@@ -1,5 +1,5 @@
 -- Redz Kill Aura | Loader
-local url = "https://raw.githubusercontent.com/trieuvancoi/Redz-kill/main/Main.lua"
+local url = "https://raw.githubusercontent.com/trieuvancoi/Redz-kill/main/main.lua"
 
 local success, response = pcall(function()
     return game:HttpGet(url)
