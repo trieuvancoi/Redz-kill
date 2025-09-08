@@ -1,82 +1,116 @@
--- Redz Kill Aura | Main Script
+-- Redz Kill Aura | Main
+-- Chính thức
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- UI
+-- Tạo ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local Toggle = Instance.new("TextButton")
-local Hide = Instance.new("TextButton")
-
 ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
 
-Frame.Parent = ScreenGui
-Frame.Size = UDim2.new(0, 200, 0, 150)
-Frame.Position = UDim2.new(0.4, 0, 0.3, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.Active = true
-Frame.Draggable = true
+-- Nút mở lại menu
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Parent = ScreenGui
+ToggleButton.Size = UDim2.new(0,120,0,40)
+ToggleButton.Position = UDim2.new(0,10,0,200)
+ToggleButton.Text = "Open Menu"
+ToggleButton.BackgroundColor3 = Color3.fromRGB(40,40,40)
+ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+ToggleButton.Visible = true
 
-Title.Parent = Frame
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-Title.Text = "Redz Kill Aura"
-Title.TextColor3 = Color3.fromRGB(255,255,255)
-Title.TextScaled = true
+-- Frame menu
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0,220,0,180)
+MainFrame.Position = UDim2.new(0.5,-110,0.5,-90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Visible = false
 
-Toggle.Parent = Frame
-Toggle.Size = UDim2.new(1, -20, 0, 40)
-Toggle.Position = UDim2.new(0, 10, 0, 50)
-Toggle.Text = "Kill Aura: OFF"
-Toggle.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
-Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-Toggle.TextScaled = true
+-- Kill Aura toggle
+local AuraButton = Instance.new("TextButton", MainFrame)
+AuraButton.Size = UDim2.new(0,200,0,30)
+AuraButton.Position = UDim2.new(0,10,0,10)
+AuraButton.Text = "Kill Aura: OFF"
+AuraButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+AuraButton.TextColor3 = Color3.fromRGB(255,255,255)
 
-Hide.Parent = Frame
-Hide.Size = UDim2.new(1, -20, 0, 30)
-Hide.Position = UDim2.new(0, 10, 0, 100)
-Hide.Text = "Ẩn Menu"
-Hide.BackgroundColor3 = Color3.fromRGB(0, 0, 100)
-Hide.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hide.TextScaled = true
+-- Range button
+local RangeButton = Instance.new("TextButton", MainFrame)
+RangeButton.Size = UDim2.new(0,200,0,30)
+RangeButton.Position = UDim2.new(0,10,0,50)
+RangeButton.Text = "Range: 10"
+RangeButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+RangeButton.TextColor3 = Color3.fromRGB(255,255,255)
 
--- Kill Aura logic
+-- Max Targets button
+local TargetButton = Instance.new("TextButton", MainFrame)
+TargetButton.Size = UDim2.new(0,200,0,30)
+TargetButton.Position = UDim2.new(0,10,0,90)
+TargetButton.Text = "Max Targets: 1"
+TargetButton.BackgroundColor3 = Color3.fromRGB(60,60,60)
+TargetButton.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- Close Menu button
+local CloseButton = Instance.new("TextButton", MainFrame)
+CloseButton.Size = UDim2.new(0,200,0,30)
+CloseButton.Position = UDim2.new(0,10,0,130)
+CloseButton.Text = "Close Menu"
+CloseButton.BackgroundColor3 = Color3.fromRGB(100,40,40)
+CloseButton.TextColor3 = Color3.fromRGB(255,255,255)
+
+-- Biến config
 local auraEnabled = false
-local range = 15 -- khoảng cách đánh
+local auraRange = 10
+local maxTargets = 1
 
-Toggle.MouseButton1Click:Connect(function()
+-- Chức năng
+AuraButton.MouseButton1Click:Connect(function()
     auraEnabled = not auraEnabled
-    if auraEnabled then
-        Toggle.Text = "Kill Aura: ON"
-        Toggle.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
-    else
-        Toggle.Text = "Kill Aura: OFF"
-        Toggle.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+    AuraButton.Text = "Kill Aura: " .. (auraEnabled and "ON" or "OFF")
+end)
+
+RangeButton.MouseButton1Click:Connect(function()
+    auraRange = auraRange + 5
+    if auraRange > 50 then auraRange = 10 end
+    RangeButton.Text = "Range: " .. auraRange
+end)
+
+TargetButton.MouseButton1Click:Connect(function()
+    maxTargets = maxTargets + 1
+    if maxTargets > 5 then maxTargets = 1 end
+    TargetButton.Text = "Max Targets: " .. maxTargets
+end)
+
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+UIS.InputBegan:Connect(function(input, gp)
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        MainFrame.Visible = not MainFrame.Visible
     end
 end)
 
-Hide.MouseButton1Click:Connect(function()
-    Frame.Visible = false
-    -- Phím K để hiện lại menu
-    game:GetService("UserInputService").InputBegan:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.K then
-            Frame.Visible = not Frame.Visible
-        end
-    end)
-end)
-
--- Loop đánh
-task.spawn(function()
-    while task.wait(0.2) do
-        if auraEnabled then
-            for _, target in pairs(Players:GetPlayers()) do
-                if target ~= LocalPlayer and target.Character and target.Character:FindFirstChild("Humanoid") then
-                    local mag = (target.Character.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-                    if mag <= range and target.Character.Humanoid.Health > 0 then
-                        game:GetService("ReplicatedStorage").Remotes.Combat:FireServer(target.Character.Humanoid)
-                    end
+-- Kill Aura loop
+RunService.Heartbeat:Connect(function()
+    if auraEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local count = 0
+        for _, enemy in pairs(workspace:GetDescendants()) do
+            if enemy:FindFirstChild("Humanoid") 
+            and enemy:FindFirstChild("HumanoidRootPart") 
+            and enemy ~= LocalPlayer.Character then
+                local dist = (enemy.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                if dist <= auraRange then
+                    enemy.Humanoid:TakeDamage(10) -- damage test
+                    count = count + 1
+                    if count >= maxTargets then break end
                 end
             end
         end
