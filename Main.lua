@@ -1,4 +1,3 @@
--- Test GUI hiển thị
 local player = game.Players.LocalPlayer
 
 local ScreenGui = Instance.new("ScreenGui")
